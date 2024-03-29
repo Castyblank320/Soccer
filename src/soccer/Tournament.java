@@ -391,6 +391,7 @@ int CurrentTeam1;
 
     private void AutoPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AutoPlayActionPerformed
         // TODO add your handling code here:
+        initObjects();
         Random random = new Random();
         for (int i=0;i<Teams.size();i++){
             for (int j=i+1;j<Teams.size();j++){
