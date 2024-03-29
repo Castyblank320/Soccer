@@ -415,6 +415,7 @@ int CurrentTeam1;
                 }
             }
         }
+        bob();
     }//GEN-LAST:event_AutoPlayActionPerformed
 
     /**
