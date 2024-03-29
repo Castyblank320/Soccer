@@ -23,9 +23,11 @@ public class Team {
     public void setName(String Name){
         this.Name = Name;
 }
+    
     public String getName(){
         return this.Name;
 }
+    
     public void play(int Points,int Goals,Team Match, int MatchGoals){
         this.Points.add(Points);
         this.Goals.add(Goals);
