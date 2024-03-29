@@ -6,6 +6,7 @@ package soccer;
 
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import java.util.Random;
 
 /**
  *
@@ -14,8 +15,8 @@ import javax.swing.table.DefaultTableModel;
 public class Tournament extends javax.swing.JFrame {
     
     String[] COLUMNS = {"Team", "Wins", "Loses","Ties"};
-    String[] COLUMNS2 = {"Team", "Result"};
-    String[] COLUMNS3 = {"Team", "Points"};
+    String[] COLUMNS2 = {"Match", "Result","Team Goals","Match Goals"};
+    String[] COLUMNS3 = {"Team", "Points","Goals"};
     private ArrayList<Team> Teams;
     
     /**
@@ -43,9 +44,11 @@ public class Tournament extends javax.swing.JFrame {
         Team2 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         SaveMatch = new javax.swing.JButton();
-        State = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        Goal1 = new javax.swing.JTextField();
+        Goal2 = new javax.swing.JTextField();
+        ErrorText = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         TeamSelected = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -53,6 +56,9 @@ public class Tournament extends javax.swing.JFrame {
         TeamPoints = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         TablePodium = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        AutoPlay = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,42 +102,48 @@ public class Tournament extends javax.swing.JFrame {
             }
         });
 
-        State.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Team 1 win", "Team 2 win", "Tie" }));
-        State.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StateActionPerformed(evt);
-            }
-        });
-
         jLabel2.setText("Team 1");
 
         jLabel3.setText("Team 2");
+
+        Goal1.setText("0");
+
+        Goal2.setText("0"); // NOI18N
+
+        ErrorText.setToolTipText("");
+        ErrorText.setAlignmentX(0.5F);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(94, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(jLabel2)
-                        .addGap(148, 148, 148)
-                        .addComponent(jLabel3))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(Team1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(Team2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(90, 90, 90)
-                        .addComponent(State, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(104, 104, 104)
-                        .addComponent(SaveMatch)))
-                .addGap(84, 84, 84))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(SaveMatch)
+                        .addGap(199, 199, 199))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(45, 45, 45)
+                                .addComponent(jLabel2)
+                                .addGap(148, 148, 148)
+                                .addComponent(jLabel3))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(Goal1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(Team1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(Goal2)
+                                    .addComponent(Team2, 0, 133, Short.MAX_VALUE))))
+                        .addGap(84, 84, 84))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(ErrorText, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(184, 184, 184))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,19 +152,34 @@ public class Tournament extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
-                .addGap(20, 20, 20)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Team1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Team2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addGap(3, 3, 3)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Team1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Team2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(Goal1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Goal2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(State, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ErrorText, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(SaveMatch)
-                .addContainerGap(171, Short.MAX_VALUE))
+                .addContainerGap(130, Short.MAX_VALUE))
         );
 
         Tab.addTab("Matches", jPanel1);
+
+        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jPanel2MouseEntered(evt);
+            }
+        });
 
         TeamSelected.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6", "Team 7", "Team 8", "Team 9" }));
         TeamSelected.addActionListener(new java.awt.event.ActionListener() {
@@ -166,7 +193,7 @@ public class Tournament extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Team", "Result"
+                "Match", "Result", "Team Goals", "Match Goals"
             }
         ));
         jScrollPane1.setViewportView(TeamMatches);
@@ -220,6 +247,41 @@ public class Tournament extends javax.swing.JFrame {
 
         Tab.addTab("Podium", jScrollPane2);
 
+        jLabel4.setText("This will clean the current board and simulate a full playday");
+
+        AutoPlay.setText("Start autoplay");
+        AutoPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AutoPlayActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(84, 84, 84)
+                        .addComponent(jLabel4))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(186, 186, 186)
+                        .addComponent(AutoPlay)))
+                .addContainerGap(96, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(104, 104, 104)
+                .addComponent(jLabel4)
+                .addGap(41, 41, 41)
+                .addComponent(AutoPlay)
+                .addContainerGap(187, Short.MAX_VALUE))
+        );
+
+        Tab.addTab("Autoplay", jPanel3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -234,28 +296,35 @@ public class Tournament extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void StateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StateActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_StateActionPerformed
-
     private void SaveMatchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveMatchActionPerformed
         // TODO add your handling code here:
-        switch (State.getSelectedIndex()){
-            case 0 -> {
-                Teams.get(CurrentTeam1).play(3,Teams.get(CurrentTeam2));
-                Teams.get(CurrentTeam2).play(0,Teams.get(CurrentTeam1));
-                break;
+        
+        try{
+            int goal1 = Integer.parseInt(Goal1.getText()),goal2 = Integer.parseInt(Goal2.getText());
+            if (goal1<0 || goal2<0){
+                ErrorText.setText("No valid Goals");
+            }else{
+                switch (play(goal1,goal2)){
+                case 0 -> {
+                    Teams.get(CurrentTeam1).play(3, goal1, Teams.get(CurrentTeam2), goal2);
+                    Teams.get(CurrentTeam2).play(0, goal2, Teams.get(CurrentTeam1), goal1);
+                    break;
+                    }
+                case 1 -> {
+                    Teams.get(CurrentTeam1).play(0, goal1, Teams.get(CurrentTeam2), goal2);
+                    Teams.get(CurrentTeam2).play(3, goal2, Teams.get(CurrentTeam1), goal1);
+                    break;
+                    }
+                case 2 -> {
+                    Teams.get(CurrentTeam1).play(1, goal1, Teams.get(CurrentTeam2), goal2);
+                    Teams.get(CurrentTeam2).play(1, goal2, Teams.get(CurrentTeam1), goal1);
+                    break;
+                    }
+                }
+                ErrorText.setText("");
             }
-            case 1 -> {
-                Teams.get(CurrentTeam1).play(0,Teams.get(CurrentTeam2));
-                Teams.get(CurrentTeam2).play(3,Teams.get(CurrentTeam1));
-                break;
-            }
-            case 2 -> {
-                Teams.get(CurrentTeam1).play(1,Teams.get(CurrentTeam2));
-                Teams.get(CurrentTeam2).play(1,Teams.get(CurrentTeam1));
-                break;
-            }
+        }catch(Exception e){
+            ErrorText.setText("Error: No valid Goals");
         }
         bob();
     }//GEN-LAST:event_SaveMatchActionPerformed
@@ -284,42 +353,13 @@ int CurrentTeam1;
 
     private void TeamSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TeamSelectedActionPerformed
         // TODO add your handling code here:
-        Team team = Teams.get(TeamSelected.getSelectedIndex());
-        
-        String[][] data = new String[team.getPoints().size()][2];
-        for (int i=0;i<team.getPoints().size();i++){
-            data[i][0] = team.getMatches().get(i).getName();
-            switch (team.getPoints().get(i)){
-                case 3:
-                    data[i][1] = "Win";
-                    break;
-                case 1:
-                    data[i][1] = "Tie";
-                    break;
-                case 0:
-                    data[i][1] = "Lose";
-                    break;
-            }
-        }
-        DefaultTableModel tableModel = new DefaultTableModel(data, COLUMNS2) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        TeamMatches.setModel(tableModel);
-        
-        int points = 0;
-        for (int i:team.getPoints()){
-            points = points+i;
-        }
-        TeamPoints.setText("Total points: "+points);
+        selectTeam();
     }//GEN-LAST:event_TeamSelectedActionPerformed
 
     private void TablePodiumFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_TablePodiumFocusGained
         // TODO add your handling code here:
         Team[] Podium = getPodium();
-        String[][] data = new String[Teams.size()][2];
+        String[][] data = new String[Teams.size()][3];
         
         for (int i=0;i<Podium.length;i++){
             data[i][0] = Podium[i].getName();
@@ -328,6 +368,11 @@ int CurrentTeam1;
                 c = c+j;
             }
             data[i][1] = c+"";
+            c = 0;
+            for (int j:Podium[i].getGoals()){
+                c = c+j;
+            }
+            data[i][2] = c+"";
         }
         
         DefaultTableModel tableModel = new DefaultTableModel(data, COLUMNS3) {
@@ -338,6 +383,38 @@ int CurrentTeam1;
         };
         TablePodium.setModel(tableModel);
     }//GEN-LAST:event_TablePodiumFocusGained
+
+    private void jPanel2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseEntered
+        // TODO add your handling code here:
+        selectTeam();
+    }//GEN-LAST:event_jPanel2MouseEntered
+
+    private void AutoPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AutoPlayActionPerformed
+        // TODO add your handling code here:
+        Random random = new Random();
+        for (int i=0;i<Teams.size();i++){
+            for (int j=i+1;j<Teams.size();j++){
+                int goal1 = random.nextInt(4),goal2 = random.nextInt(4);
+                switch (play(goal1,goal2)){
+                    case 0 -> {
+                        Teams.get(i).play(3, goal1, Teams.get(j), goal2);
+                        Teams.get(j).play(0, goal2, Teams.get(i), goal1);
+                        break;
+                        }
+                    case 1 -> {
+                        Teams.get(i).play(0, goal1, Teams.get(j), goal2);
+                        Teams.get(j).play(3, goal2, Teams.get(i), goal1);
+                        break;
+                        }
+                    case 2 -> {
+                        Teams.get(i).play(1, goal1, Teams.get(j), goal2);
+                        Teams.get(j).play(1, goal2, Teams.get(i), goal1);
+                        break;
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_AutoPlayActionPerformed
 
     /**
      * @param args the command line arguments
@@ -512,10 +589,61 @@ int CurrentTeam1;
         }
         return Podium;
     }
+    
+    public int play(int a,int b){
+        if (a>b){
+            return 0;
+        }
+        if (a<b){
+            return 1;
+        }
+        if (a==b){
+            return 2;
+        }
+        return -1;
+    }
+    
+    public void selectTeam(){
+        Team team = Teams.get(TeamSelected.getSelectedIndex());
+        
+        String[][] data = new String[team.getPoints().size()][4];
+        for (int i=0;i<team.getPoints().size();i++){
+            data[i][0] = team.getMatches().get(i).getName();
+            switch (team.getPoints().get(i)){
+                case 3:
+                    data[i][1] = "Win";
+                    break;
+                case 1:
+                    data[i][1] = "Tie";
+                    break;
+                case 0:
+                    data[i][1] = "Lose";
+                    break;
+            }
+            data[i][2] = team.getGoals().get(i)+"";
+            data[i][3] = team.getMatchesGoals().get(i)+"";
+        }
+        DefaultTableModel tableModel = new DefaultTableModel(data, COLUMNS2) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        TeamMatches.setModel(tableModel);
+        
+        int points = 0;
+        for (int i:team.getPoints()){
+            points = points+i;
+        }
+        TeamPoints.setText("Total points: "+points);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AutoPlay;
+    private javax.swing.JLabel ErrorText;
+    private javax.swing.JTextField Goal1;
+    private javax.swing.JTextField Goal2;
     private javax.swing.JButton SaveMatch;
-    private javax.swing.JComboBox<String> State;
     public javax.swing.JTabbedPane Tab;
     private javax.swing.JScrollPane TablePanel;
     private javax.swing.JTable TablePodium;
@@ -528,8 +656,10 @@ int CurrentTeam1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
